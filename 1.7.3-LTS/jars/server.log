@@ -1,0 +1,76 @@
+2021-11-08 00:26:21 [INFO] Starting minecraft server version Beta 1.7.3
+2021-11-08 00:26:21 [INFO] Loading properties
+2021-11-08 00:26:21 [INFO] Starting Minecraft server on *:25565
+2021-11-08 00:26:21 [WARNING] **** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!
+2021-11-08 00:26:21 [WARNING] The server will make no attempt to authenticate usernames. Beware.
+2021-11-08 00:26:21 [WARNING] While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.
+2021-11-08 00:26:21 [WARNING] To change this, set "online-mode" to "true" in the server.settings file.
+2021-11-08 00:26:21 [WARNING] Failed to load ban list: java.io.FileNotFoundException: banned-players.txt (No such file or directory)
+2021-11-08 00:26:21 [WARNING] Failed to load ip ban list: java.io.FileNotFoundException: banned-ips.txt (No such file or directory)
+2021-11-08 00:26:21 [WARNING] Failed to load ip ban list: java.io.FileNotFoundException: ops.txt (No such file or directory)
+2021-11-08 00:26:21 [WARNING] Failed to load white-list: java.io.FileNotFoundException: white-list.txt (No such file or directory)
+2021-11-08 00:26:21 [INFO] Preparing level "world"
+2021-11-08 00:26:21 [INFO] Preparing start region for level 0
+2021-11-08 00:26:22 [INFO] Preparing spawn area: 8%
+2021-11-08 00:26:23 [INFO] Preparing spawn area: 16%
+2021-11-08 00:26:24 [INFO] Preparing spawn area: 24%
+2021-11-08 00:26:25 [INFO] Preparing spawn area: 36%
+2021-11-08 00:26:26 [INFO] Preparing spawn area: 48%
+2021-11-08 00:26:27 [INFO] Preparing spawn area: 61%
+2021-11-08 00:26:28 [INFO] Preparing spawn area: 69%
+2021-11-08 00:26:29 [INFO] Preparing spawn area: 77%
+2021-11-08 00:26:30 [INFO] Preparing spawn area: 85%
+2021-11-08 00:26:31 [INFO] Preparing spawn area: 89%
+2021-11-08 00:26:32 [INFO] Preparing spawn area: 93%
+2021-11-08 00:26:33 [INFO] Preparing spawn area: 97%
+2021-11-08 00:26:34 [INFO] Preparing start region for level 1
+2021-11-08 00:26:34 [INFO] Preparing spawn area: 4%
+2021-11-08 00:26:35 [INFO] Preparing spawn area: 8%
+2021-11-08 00:26:36 [INFO] Preparing spawn area: 16%
+2021-11-08 00:26:37 [INFO] Preparing spawn area: 20%
+2021-11-08 00:26:38 [INFO] Preparing spawn area: 24%
+2021-11-08 00:26:40 [INFO] Preparing spawn area: 24%
+2021-11-08 00:26:41 [INFO] Preparing spawn area: 32%
+2021-11-08 00:26:42 [INFO] Preparing spawn area: 32%
+2021-11-08 00:26:43 [INFO] Preparing spawn area: 40%
+2021-11-08 00:26:44 [INFO] Preparing spawn area: 40%
+2021-11-08 00:26:45 [INFO] Preparing spawn area: 44%
+2021-11-08 00:26:46 [INFO] Preparing spawn area: 48%
+2021-11-08 00:26:47 [INFO] Preparing spawn area: 52%
+2021-11-08 00:26:48 [INFO] Preparing spawn area: 57%
+2021-11-08 00:26:49 [INFO] Preparing spawn area: 60%
+2021-11-08 00:26:50 [INFO] Preparing spawn area: 61%
+2021-11-08 00:26:52 [INFO] Preparing spawn area: 65%
+2021-11-08 00:26:54 [INFO] Preparing spawn area: 73%
+2021-11-08 00:26:55 [INFO] Preparing spawn area: 77%
+2021-11-08 00:26:56 [INFO] Preparing spawn area: 81%
+2021-11-08 00:26:57 [INFO] Preparing spawn area: 85%
+2021-11-08 00:26:58 [INFO] Preparing spawn area: 93%
+2021-11-08 00:26:59 [INFO] Preparing spawn area: 93%
+2021-11-08 00:27:00 [INFO] Preparing spawn area: 97%
+2021-11-08 00:27:01 [INFO] Done (39782874846ns)! For help, type "help" or "?"
+2021-11-08 00:27:05 [INFO] To run the server without a gui, start it like this:
+2021-11-08 00:27:05 [INFO]    java -Xmx1024M -Xms1024M -jar minecraft_server.jar nogui
+2021-11-08 00:27:05 [INFO] Console commands:
+2021-11-08 00:27:05 [INFO]    help  or  ?               shows this message
+2021-11-08 00:27:05 [INFO]    kick <player>             removes a player from the server
+2021-11-08 00:27:05 [INFO]    ban <player>              bans a player from the server
+2021-11-08 00:27:05 [INFO]    pardon <player>           pardons a banned player so that they can connect again
+2021-11-08 00:27:05 [INFO]    ban-ip <ip>               bans an IP address from the server
+2021-11-08 00:27:05 [INFO]    pardon-ip <ip>            pardons a banned IP address so that they can connect again
+2021-11-08 00:27:05 [INFO]    op <player>               turns a player into an op
+2021-11-08 00:27:05 [INFO]    deop <player>             removes op status from a player
+2021-11-08 00:27:05 [INFO]    tp <player1> <player2>    moves one player to the same location as another player
+2021-11-08 00:27:05 [INFO]    give <player> <id> [num]  gives a player a resource
+2021-11-08 00:27:05 [INFO]    tell <player> <message>   sends a private message to a player
+2021-11-08 00:27:05 [INFO]    stop                      gracefully stops the server
+2021-11-08 00:27:05 [INFO]    save-all                  forces a server-wide level save
+2021-11-08 00:27:05 [INFO]    save-off                  disables terrain saving (useful for backup scripts)
+2021-11-08 00:27:05 [INFO]    save-on                   re-enables terrain saving
+2021-11-08 00:27:05 [INFO]    list                      lists all currently connected players
+2021-11-08 00:27:05 [INFO]    say <message>             broadcasts a message to all players
+2021-11-08 00:27:05 [INFO]    time <add|set> <amount>   adds to or sets the world time (0-24000)
+2021-11-08 00:27:31 [INFO] CONSOLE: Stopping the server..
+2021-11-08 00:27:31 [INFO] Stopping server
+2021-11-08 00:27:31 [INFO] Saving chunks
+2021-11-08 00:27:32 [INFO] Saving chunks

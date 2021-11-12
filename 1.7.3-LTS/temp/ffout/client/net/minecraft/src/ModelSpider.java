@@ -1,0 +1,132 @@
+package net.minecraft.src;
+
+public class ModelSpider extends ModelBase {
+    public ModelRenderer field_1255_a;
+    public ModelRenderer field_1254_b;
+    public ModelRenderer field_1253_c;
+    public ModelRenderer field_1252_d;
+    public ModelRenderer field_1251_e;
+    public ModelRenderer field_1250_f;
+    public ModelRenderer field_1249_g;
+    public ModelRenderer field_1248_h;
+    public ModelRenderer field_1247_i;
+    public ModelRenderer field_1246_j;
+    public ModelRenderer field_1245_m;
+
+    public ModelSpider() {
+        float var1 = 0.0F;
+        byte var2 = 15;
+        this.field_1255_a = new ModelRenderer(32, 4);
+        this.field_1255_a.func_923_a(-4.0F, -4.0F, -8.0F, 8, 8, 8, var1);
+        this.field_1255_a.func_925_a(0.0F, (float)(0 + var2), -3.0F);
+        this.field_1254_b = new ModelRenderer(0, 0);
+        this.field_1254_b.func_923_a(-3.0F, -3.0F, -3.0F, 6, 6, 6, var1);
+        this.field_1254_b.func_925_a(0.0F, (float)var2, 0.0F);
+        this.field_1253_c = new ModelRenderer(0, 12);
+        this.field_1253_c.func_923_a(-5.0F, -4.0F, -6.0F, 10, 8, 12, var1);
+        this.field_1253_c.func_925_a(0.0F, (float)(0 + var2), 9.0F);
+        this.field_1252_d = new ModelRenderer(18, 0);
+        this.field_1252_d.func_923_a(-15.0F, -1.0F, -1.0F, 16, 2, 2, var1);
+        this.field_1252_d.func_925_a(-4.0F, (float)(0 + var2), 2.0F);
+        this.field_1251_e = new ModelRenderer(18, 0);
+        this.field_1251_e.func_923_a(-1.0F, -1.0F, -1.0F, 16, 2, 2, var1);
+        this.field_1251_e.func_925_a(4.0F, (float)(0 + var2), 2.0F);
+        this.field_1250_f = new ModelRenderer(18, 0);
+        this.field_1250_f.func_923_a(-15.0F, -1.0F, -1.0F, 16, 2, 2, var1);
+        this.field_1250_f.func_925_a(-4.0F, (float)(0 + var2), 1.0F);
+        this.field_1249_g = new ModelRenderer(18, 0);
+        this.field_1249_g.func_923_a(-1.0F, -1.0F, -1.0F, 16, 2, 2, var1);
+        this.field_1249_g.func_925_a(4.0F, (float)(0 + var2), 1.0F);
+        this.field_1248_h = new ModelRenderer(18, 0);
+        this.field_1248_h.func_923_a(-15.0F, -1.0F, -1.0F, 16, 2, 2, var1);
+        this.field_1248_h.func_925_a(-4.0F, (float)(0 + var2), 0.0F);
+        this.field_1247_i = new ModelRenderer(18, 0);
+        this.field_1247_i.func_923_a(-1.0F, -1.0F, -1.0F, 16, 2, 2, var1);
+        this.field_1247_i.func_925_a(4.0F, (float)(0 + var2), 0.0F);
+        this.field_1246_j = new ModelRenderer(18, 0);
+        this.field_1246_j.func_923_a(-15.0F, -1.0F, -1.0F, 16, 2, 2, var1);
+        this.field_1246_j.func_925_a(-4.0F, (float)(0 + var2), -1.0F);
+        this.field_1245_m = new ModelRenderer(18, 0);
+        this.field_1245_m.func_923_a(-1.0F, -1.0F, -1.0F, 16, 2, 2, var1);
+        this.field_1245_m.func_925_a(4.0F, (float)(0 + var2), -1.0F);
+    }
+
+    public void func_864_b(float var1, float var2, float var3, float var4, float var5, float var6) {
+        this.func_863_a(var1, var2, var3, var4, var5, var6);
+        this.field_1255_a.func_922_a(var6);
+        this.field_1254_b.func_922_a(var6);
+        this.field_1253_c.func_922_a(var6);
+        this.field_1252_d.func_922_a(var6);
+        this.field_1251_e.func_922_a(var6);
+        this.field_1250_f.func_922_a(var6);
+        this.field_1249_g.func_922_a(var6);
+        this.field_1248_h.func_922_a(var6);
+        this.field_1247_i.func_922_a(var6);
+        this.field_1246_j.func_922_a(var6);
+        this.field_1245_m.func_922_a(var6);
+    }
+
+    public void func_863_a(float var1, float var2, float var3, float var4, float var5, float var6) {
+        this.field_1255_a.field_1406_e = var4 / 57.295776F;
+        this.field_1255_a.field_1407_d = var5 / 57.295776F;
+        float var7 = 0.7853982F;
+        this.field_1252_d.field_1405_f = -var7;
+        this.field_1251_e.field_1405_f = var7;
+        this.field_1250_f.field_1405_f = -var7 * 0.74F;
+        this.field_1249_g.field_1405_f = var7 * 0.74F;
+        this.field_1248_h.field_1405_f = -var7 * 0.74F;
+        this.field_1247_i.field_1405_f = var7 * 0.74F;
+        this.field_1246_j.field_1405_f = -var7;
+        this.field_1245_m.field_1405_f = var7;
+        float var8 = -0.0F;
+        float var9 = 0.3926991F;
+        this.field_1252_d.field_1406_e = var9 * 2.0F + var8;
+        this.field_1251_e.field_1406_e = -var9 * 2.0F - var8;
+        this.field_1250_f.field_1406_e = var9 * 1.0F + var8;
+        this.field_1249_g.field_1406_e = -var9 * 1.0F - var8;
+        this.field_1248_h.field_1406_e = -var9 * 1.0F + var8;
+        this.field_1247_i.field_1406_e = var9 * 1.0F - var8;
+        this.field_1246_j.field_1406_e = -var9 * 2.0F + var8;
+        this.field_1245_m.field_1406_e = var9 * 2.0F - var8;
+        float var10 = -(MathHelper.func_1114_b(var1 * 0.6662F * 2.0F + 0.0F) * 0.4F) * var2;
+        float var11 = -(MathHelper.func_1114_b(var1 * 0.6662F * 2.0F + 3.1415927F) * 0.4F) * var2;
+        float var12 = -(MathHelper.func_1114_b(var1 * 0.6662F * 2.0F + 1.5707964F) * 0.4F) * var2;
+        float var13 = -(MathHelper.func_1114_b(var1 * 0.6662F * 2.0F + 4.712389F) * 0.4F) * var2;
+        float var14 = Math.abs(MathHelper.func_1106_a(var1 * 0.6662F + 0.0F) * 0.4F) * var2;
+        float var15 = Math.abs(MathHelper.func_1106_a(var1 * 0.6662F + 3.1415927F) * 0.4F) * var2;
+        float var16 = Math.abs(MathHelper.func_1106_a(var1 * 0.6662F + 1.5707964F) * 0.4F) * var2;
+        float var17 = Math.abs(MathHelper.func_1106_a(var1 * 0.6662F + 4.712389F) * 0.4F) * var2;
+        ModelRenderer var10000 = this.field_1252_d;
+        var10000.field_1406_e += var10;
+        var10000 = this.field_1251_e;
+        var10000.field_1406_e += -var10;
+        var10000 = this.field_1250_f;
+        var10000.field_1406_e += var11;
+        var10000 = this.field_1249_g;
+        var10000.field_1406_e += -var11;
+        var10000 = this.field_1248_h;
+        var10000.field_1406_e += var12;
+        var10000 = this.field_1247_i;
+        var10000.field_1406_e += -var12;
+        var10000 = this.field_1246_j;
+        var10000.field_1406_e += var13;
+        var10000 = this.field_1245_m;
+        var10000.field_1406_e += -var13;
+        var10000 = this.field_1252_d;
+        var10000.field_1405_f += var14;
+        var10000 = this.field_1251_e;
+        var10000.field_1405_f += -var14;
+        var10000 = this.field_1250_f;
+        var10000.field_1405_f += var15;
+        var10000 = this.field_1249_g;
+        var10000.field_1405_f += -var15;
+        var10000 = this.field_1248_h;
+        var10000.field_1405_f += var16;
+        var10000 = this.field_1247_i;
+        var10000.field_1405_f += -var16;
+        var10000 = this.field_1246_j;
+        var10000.field_1405_f += var17;
+        var10000 = this.field_1245_m;
+        var10000.field_1405_f += -var17;
+    }
+}

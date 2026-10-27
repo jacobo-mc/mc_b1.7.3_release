@@ -22,7 +22,7 @@ public class ImageBufferDownload implements ImageBuffer {
             var3.dispose();
             this.imageData = ((DataBufferInt)var2.getRaster().getDataBuffer()).getData();
             this.setAreaOpaque(0, 0, 32, 16);
-            this.setAreaTransparent(32, 0, 64, 32);
+            if (var1.getHeight() == 32) this.setAreaTransparent(32, 0, 64, 16);
             this.setAreaOpaque(0, 16, 64, 32);
             boolean var4 = false;
 

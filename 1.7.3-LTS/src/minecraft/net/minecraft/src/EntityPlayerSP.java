@@ -14,7 +14,7 @@ public class EntityPlayerSP extends EntityPlayer {
         this.mc = var1;
         this.dimension = var4;
         if (var3 != null && var3.username != null && var3.username.length() > 0) {
-            this.skinUrl = "http://s3.amazonaws.com/MinecraftSkins/" + var3.username + ".png";
+            this.skinUrl = SkinService.profileUrl(var3.username);
         }
 
         this.username = var3.username;

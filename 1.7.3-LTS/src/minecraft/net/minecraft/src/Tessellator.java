@@ -14,6 +14,11 @@ public class Tessellator {
     private ByteBuffer byteBuffer;
     private IntBuffer intBuffer;
     private FloatBuffer floatBuffer;
+    // Apple's OpenGL compatibility driver can misread packed byte vertex colours.
+    // A separate float array avoids that path (also under Rosetta).
+    private static final boolean FLOAT_COLORS = Boolean.parseBoolean(System.getProperty(
+            "minecraft.macosFloatColors", System.getProperty("os.name", "").toLowerCase(java.util.Locale.ROOT).contains("mac") ? "true" : "false"));
+    private FloatBuffer colorBuffer;
     private int[] rawBuffer;
     private int vertexCount = 0;
     private double textureU;
@@ -44,7 +49,8 @@ public class Tessellator {
         this.intBuffer = this.byteBuffer.asIntBuffer();
         this.floatBuffer = this.byteBuffer.asFloatBuffer();
         this.rawBuffer = new int[var1];
-        this.useVBO = tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
+        if (FLOAT_COLORS) this.colorBuffer = GLAllocation.createDirectFloatBuffer(var1 / 2);
+        this.useVBO = !FLOAT_COLORS && tryVBO && GLContext.getCapabilities().GL_ARB_vertex_buffer_object;
         if (this.useVBO) {
             this.vertexBuffers = GLAllocation.createDirectIntBuffer(this.vboCount);
             ARBVertexBufferObject.glGenBuffersARB(this.vertexBuffers);
@@ -80,7 +86,10 @@ public class Tessellator {
                 }
 
                 if (this.hasColor) {
-                    if (this.useVBO) {
+                    if (FLOAT_COLORS) {
+                        VertexColors.toFloats(this.rawBuffer, this.vertexCount, this.colorBuffer, ByteOrder.nativeOrder());
+                        GL11.glColorPointer(4, 0, this.colorBuffer);
+                    } else if (this.useVBO) {
                         GL11.glColorPointer(4, 5121 /*GL_UNSIGNED_BYTE*/, 32, 20L);
                     } else {
                         this.byteBuffer.position(20);

@@ -182,7 +182,7 @@ public class TileEntityFurnace extends TileEntity implements IInventory {
         }
     }
 
-    private int getItemBurnTime(ItemStack var1) {
+    public static int getItemBurnTime(ItemStack var1) {
         if (var1 == null) {
             return 0;
         } else {

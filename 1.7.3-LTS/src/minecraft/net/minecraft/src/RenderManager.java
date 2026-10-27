@@ -94,6 +94,10 @@ public class RenderManager {
             this.playerViewX = var4.prevRotationPitch + (var4.rotationPitch - var4.prevRotationPitch) * var6;
         }
 
+        if (var5.thirdPersonView == 2) {
+            this.playerViewY += 180.0F;
+            this.playerViewX = -this.playerViewX;
+        }
         this.field_1222_l = var4.lastTickPosX + (var4.posX - var4.lastTickPosX) * (double)var6;
         this.field_1221_m = var4.lastTickPosY + (var4.posY - var4.lastTickPosY) * (double)var6;
         this.field_1220_n = var4.lastTickPosZ + (var4.posZ - var4.lastTickPosZ) * (double)var6;

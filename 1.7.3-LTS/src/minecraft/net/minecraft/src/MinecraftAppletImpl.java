@@ -20,5 +20,6 @@ public class MinecraftAppletImpl extends Minecraft {
         this.mainFrame.setLayout(new BorderLayout());
         this.mainFrame.add(new PanelCrashReport(var1), "Center");
         this.mainFrame.validate();
+        ClientWindow.setHostVisible(this.mainFrame, true);
     }
 }

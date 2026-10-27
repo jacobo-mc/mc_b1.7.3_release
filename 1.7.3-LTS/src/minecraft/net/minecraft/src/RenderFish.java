@@ -44,7 +44,7 @@ public class RenderFish extends Render {
             double var28 = var1.angler.prevPosX + (var1.angler.posX - var1.angler.prevPosX) * (double)var9 + var27.xCoord;
             double var30 = var1.angler.prevPosY + (var1.angler.posY - var1.angler.prevPosY) * (double)var9 + var27.yCoord;
             double var32 = var1.angler.prevPosZ + (var1.angler.posZ - var1.angler.prevPosZ) * (double)var9 + var27.zCoord;
-            if (this.renderManager.options.thirdPersonView) {
+            if (this.renderManager.options.thirdPersonView != 0) {
                 var20 = (var1.angler.prevRenderYawOffset + (var1.angler.renderYawOffset - var1.angler.prevRenderYawOffset) * var9) * 3.1415927F / 180.0F;
                 var21 = (double)MathHelper.sin(var20);
                 var23 = (double)MathHelper.cos(var20);

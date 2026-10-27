@@ -14,6 +14,10 @@ public class Slot {
         this.yDisplayPosition = var4;
     }
 
+    public int getInventoryIndex(IInventory inventory) {
+        return this.inventory == inventory ? this.slotIndex : -1;
+    }
+
     public void onPickupFromSlot(ItemStack var1) {
         this.onSlotChanged();
     }

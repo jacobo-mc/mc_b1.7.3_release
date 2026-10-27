@@ -2,45 +2,40 @@ package net.minecraft.src;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.io.InputStream;
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 class ThreadDownloadImage extends Thread {
-    // $FF: synthetic field
     final String location;
-    // $FF: synthetic field
     final ImageBuffer buffer;
-    // $FF: synthetic field
     final ThreadDownloadImageData imageData;
 
-    ThreadDownloadImage(ThreadDownloadImageData var1, String var2, ImageBuffer var3) {
-        this.imageData = var1;
-        this.location = var2;
-        this.buffer = var3;
+    ThreadDownloadImage(ThreadDownloadImageData data, String location, ImageBuffer buffer) {
+        this.imageData = data;
+        this.location = location;
+        this.buffer = buffer;
     }
 
     public void run() {
-        HttpURLConnection var1 = null;
-
+        HttpURLConnection connection = null;
         try {
-            URL var2 = new URL(this.location);
-            var1 = (HttpURLConnection)var2.openConnection();
-            var1.setDoInput(true);
-            var1.setDoOutput(false);
-            var1.connect();
-            if (var1.getResponseCode() / 100 == 4) {
-                return;
-            }
-
-            if (this.buffer == null) {
-                this.imageData.image = ImageIO.read(var1.getInputStream());
+            BufferedImage image;
+            if (SkinService.isProfileUrl(this.location)) {
+                image = SkinService.download(this.location);
             } else {
-                this.imageData.image = this.buffer.parseUserSkin(ImageIO.read(var1.getInputStream()));
+                connection = (HttpURLConnection)new URL(this.location).openConnection();
+                connection.setConnectTimeout(5000);
+                connection.setReadTimeout(5000);
+                if (connection.getResponseCode() != 200) return;
+                try (InputStream stream = connection.getInputStream()) { image = ImageIO.read(stream); }
             }
-        } catch (Exception var6) {
-            var6.printStackTrace();
+            if (image != null) this.imageData.image = this.buffer == null ? image : this.buffer.parseUserSkin(image);
+        } catch (Exception failure) {
+            // Default Steve remains available on timeouts, missing profiles, or malformed images.
+            System.err.println("Could not download player texture: " + failure.getClass().getSimpleName());
         } finally {
-            var1.disconnect();
+            if (connection != null) connection.disconnect();
         }
-
     }
 }

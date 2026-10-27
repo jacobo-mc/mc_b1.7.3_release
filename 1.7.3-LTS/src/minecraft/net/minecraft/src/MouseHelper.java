@@ -5,6 +5,7 @@ import java.nio.IntBuffer;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 
 public class MouseHelper {
     private Component windowComponent;
@@ -35,7 +36,9 @@ public class MouseHelper {
     }
 
     public void ungrabMouseCursor() {
-        Mouse.setCursorPosition(this.windowComponent.getWidth() / 2, this.windowComponent.getHeight() / 2);
+        int width = this.windowComponent == null ? Display.getWidth() : this.windowComponent.getWidth();
+        int height = this.windowComponent == null ? Display.getHeight() : this.windowComponent.getHeight();
+        Mouse.setCursorPosition(Math.max(1, width) / 2, Math.max(1, height) / 2);
         Mouse.setGrabbed(false);
     }
 

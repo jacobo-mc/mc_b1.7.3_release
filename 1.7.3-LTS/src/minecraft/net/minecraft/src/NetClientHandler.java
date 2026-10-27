@@ -1,11 +1,8 @@
 package net.minecraft.src;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Random;
@@ -383,18 +380,14 @@ public class NetClientHandler extends NetHandler {
             this.addToSendQueue(new Packet1Login(this.mc.session.username, 14));
         } else {
             try {
-                URL var2 = new URL("http://www.minecraft.net/game/joinserver.jsp?user=" + this.mc.session.username + "&sessionId=" + this.mc.session.sessionId + "&serverId=" + var1.username);
-                BufferedReader var3 = new BufferedReader(new InputStreamReader(var2.openStream()));
-                String var4 = var3.readLine();
-                var3.close();
+                String var4 = LegacyAuth.joinServer(this.mc.session.username, this.mc.session.sessionId, var1.username);
                 if (var4.equalsIgnoreCase("ok")) {
                     this.addToSendQueue(new Packet1Login(this.mc.session.username, 14));
                 } else {
                     this.netManager.networkShutdown("disconnect.loginFailedInfo", var4);
                 }
             } catch (Exception var5) {
-                var5.printStackTrace();
-                this.netManager.networkShutdown("disconnect.genericReason", "Internal client error: " + var5.toString());
+                this.netManager.networkShutdown("disconnect.genericReason", "Could not contact the authentication proxy. Check your connection and launcher session.");
             }
         }
 

@@ -1,6 +1,7 @@
 package net.minecraft.src;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public abstract class GuiContainer extends GuiScreen {
@@ -124,6 +125,7 @@ public abstract class GuiContainer extends GuiScreen {
 
     protected void mouseClicked(int var1, int var2, int var3) {
         super.mouseClicked(var1, var2, var3);
+        if (this.handleHotbarKey(var3 - 100, var1, var2)) return;
         if (var3 == 0 || var3 == 1) {
             Slot var4 = this.getSlotAtPosition(var1, var2);
             int var5 = (this.width - this.xSize) / 2;
@@ -140,7 +142,7 @@ public abstract class GuiContainer extends GuiScreen {
 
             if (var8 != -1) {
                 boolean var9 = var8 != -999 && (Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54));
-                this.mc.playerController.handleMouseClick(this.inventorySlots.windowId, var8, var3, var9, this.mc.thePlayer);
+                this.handleInventoryClick(var8, var3, var9);
             }
         }
 
@@ -153,10 +155,31 @@ public abstract class GuiContainer extends GuiScreen {
     }
 
     protected void keyTyped(char var1, int var2) {
-        if (var2 == 1 || var2 == this.mc.gameSettings.keyBindInventory.keyCode) {
+        if (var2 == 1 || this.mc.gameSettings.keyBindInventory.matches(var2)) {
             this.mc.thePlayer.closeScreen();
+        } else {
+            int x = Mouse.getX() * this.width / this.mc.displayWidth;
+            int y = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
+            this.handleHotbarKey(var2, x, y);
         }
 
+    }
+
+    protected void handleInventoryClick(int slot, int button, boolean quickMove) {
+        if (quickMove && slot >= 0) InventoryActions.quickMove(this.mc.playerController, this.inventorySlots, slot, this.mc.thePlayer);
+        else this.mc.playerController.handleMouseClick(this.inventorySlots.windowId, slot, button, false, this.mc.thePlayer);
+    }
+
+    protected boolean handleHotbarKey(int code, int mouseX, int mouseY) {
+        for (int hotbar = 0; hotbar < 9; hotbar++) {
+            if (this.mc.gameSettings.keyBindHotbar[hotbar].matches(code)) {
+                Slot hovered = this.getSlotAtPosition(mouseX, mouseY);
+                if (hovered != null) InventoryActions.swapHotbar(this.mc.playerController, this.inventorySlots,
+                        hovered.slotNumber, hotbar, this.mc.thePlayer);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void onGuiClosed() {

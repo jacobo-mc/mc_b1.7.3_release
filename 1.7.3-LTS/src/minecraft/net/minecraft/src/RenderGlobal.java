@@ -282,7 +282,7 @@ public class RenderGlobal implements IWorldAccess {
 
             for(var6 = 0; var6 < var5.size(); ++var6) {
                 var7 = (Entity)var5.get(var6);
-                if (var7.isInRangeToRenderVec3D(var1) && (var7.ignoreFrustumCheck || var2.isBoundingBoxInFrustum(var7.boundingBox)) && (var7 != this.mc.renderViewEntity || this.mc.gameSettings.thirdPersonView || this.mc.renderViewEntity.isPlayerSleeping())) {
+                if (var7.isInRangeToRenderVec3D(var1) && (var7.ignoreFrustumCheck || var2.isBoundingBoxInFrustum(var7.boundingBox)) && (var7 != this.mc.renderViewEntity || this.mc.gameSettings.thirdPersonView != 0 || this.mc.renderViewEntity.isPlayerSleeping())) {
                     int var8 = MathHelper.floor_double(var7.posY);
                     if (var8 < 0) {
                         var8 = 0;

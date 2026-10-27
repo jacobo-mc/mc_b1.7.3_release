@@ -19,5 +19,6 @@ public final class MinecraftImpl extends Minecraft {
         this.mcFrame.removeAll();
         this.mcFrame.add(new PanelCrashReport(var1), "Center");
         this.mcFrame.validate();
+        ClientWindow.setHostVisible(this.mcFrame, true);
     }
 }

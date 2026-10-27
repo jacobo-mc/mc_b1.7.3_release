@@ -24,6 +24,15 @@ public class GuiIngame extends Gui {
         this.mc = var1;
     }
 
+    protected void renderCrosshair(int width, int height) {
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(775, 769);
+        if (this.mc.gameSettings.thirdPersonView == 0) {
+            this.drawTexturedModalRect(width / 2 - 7, height / 2 - 7, 0, 0, 16, 16);
+        }
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
     public void renderGameOverlay(float var1, boolean var2, int var3, int var4) {
         ScaledResolution var5 = new ScaledResolution(this.mc.gameSettings, this.mc.displayWidth, this.mc.displayHeight);
         int var6 = var5.getScaledWidth();
@@ -36,7 +45,7 @@ public class GuiIngame extends Gui {
         }
 
         ItemStack var9 = this.mc.thePlayer.inventory.armorItemInSlot(3);
-        if (!this.mc.gameSettings.thirdPersonView && var9 != null && var9.itemID == Block.pumpkin.blockID) {
+        if (this.mc.gameSettings.thirdPersonView == 0 && var9 != null && var9.itemID == Block.pumpkin.blockID) {
             this.renderPumpkinBlur(var6, var7);
         }
 
@@ -52,10 +61,7 @@ public class GuiIngame extends Gui {
         this.drawTexturedModalRect(var6 / 2 - 91, var7 - 22, 0, 0, 182, 22);
         this.drawTexturedModalRect(var6 / 2 - 91 - 1 + var11.currentItem * 20, var7 - 22 - 1, 0, 22, 24, 22);
         GL11.glBindTexture(3553 /*GL_TEXTURE_2D*/, this.mc.renderEngine.getTexture("/gui/icons.png"));
-        GL11.glEnable(3042 /*GL_BLEND*/);
-        GL11.glBlendFunc(775, 769);
-        this.drawTexturedModalRect(var6 / 2 - 7, var7 / 2 - 7, 0, 0, 16, 16);
-        GL11.glDisable(3042 /*GL_BLEND*/);
+        this.renderCrosshair(var6, var7);
         boolean var12 = this.mc.thePlayer.heartsLife / 3 % 2 == 1;
         if (this.mc.thePlayer.heartsLife < 10) {
             var12 = false;

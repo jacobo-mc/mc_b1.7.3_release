@@ -115,7 +115,7 @@ public class GuiScreen extends Gui {
 
     public void handleKeyboardInput() {
         if (Keyboard.getEventKeyState()) {
-            if (Keyboard.getEventKey() == 87) {
+            if (this.mc.gameSettings.keyBindFullscreen.matches(Keyboard.getEventKey())) {
                 this.mc.toggleFullscreen();
                 return;
             }

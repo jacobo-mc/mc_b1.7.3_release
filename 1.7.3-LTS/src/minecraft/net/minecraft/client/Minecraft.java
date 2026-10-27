@@ -13,6 +13,7 @@ import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.ChunkCoordinates;
 import net.minecraft.src.ChunkProviderLoadOrGenerate;
+import net.minecraft.src.ClientWindow;
 import net.minecraft.src.ColorizerFoliage;
 import net.minecraft.src.ColorizerGrass;
 import net.minecraft.src.ColorizerWater;
@@ -32,6 +33,7 @@ import net.minecraft.src.GameSettings;
 import net.minecraft.src.GameWindowListener;
 import net.minecraft.src.GuiAchievement;
 import net.minecraft.src.GuiChat;
+import net.minecraft.src.GuiControls;
 import net.minecraft.src.GuiConflictWarning;
 import net.minecraft.src.GuiConnecting;
 import net.minecraft.src.GuiErrorScreen;
@@ -107,6 +109,7 @@ public abstract class Minecraft implements Runnable {
     private static Minecraft theMinecraft;
     public PlayerController playerController;
     private boolean fullscreen = false;
+    private final boolean nativeWindow = ClientWindow.useNativeWindow();
     private boolean hasCrashed = false;
     public int displayWidth;
     public int displayHeight;
@@ -193,7 +196,14 @@ public abstract class Minecraft implements Runnable {
         this.serverPort = var2;
     }
 
-    public void startGame() throws LWJGLException {
+    protected void createDisplay() throws LWJGLException {
+        Canvas host = this.mcCanvas;
+        if (this.nativeWindow) {
+            this.mcCanvas = null;
+            this.hideQuitButton = false;
+            Display.setParent(null);
+            Display.setResizable(true);
+        }
         if (this.mcCanvas != null) {
             Graphics var1 = this.mcCanvas.getGraphics();
             if (var1 != null) {
@@ -233,6 +243,11 @@ public abstract class Minecraft implements Runnable {
             Display.create();
         }
 
+        if (this.nativeWindow) ClientWindow.setHostVisible(host, false);
+    }
+
+    public void startGame() throws LWJGLException {
+        this.createDisplay();
         this.mcDataDir = getMinecraftDir();
         this.saveLoader = new SaveConverterMcRegion(new File(this.mcDataDir, "saves"));
         this.gameSettings = new GameSettings(this, this.mcDataDir);
@@ -512,7 +527,7 @@ public abstract class Minecraft implements Runnable {
 
             while(this.running) {
                 try {
-                    if (this.mcApplet != null && !this.mcApplet.isActive()) {
+                    if (!this.nativeWindow && this.mcApplet != null && !this.mcApplet.isActive()) {
                         break;
                     }
 
@@ -555,10 +570,11 @@ public abstract class Minecraft implements Runnable {
 
                     if (!Keyboard.isKeyDown(65)) {
                         Display.update();
+                        this.updateDisplaySize();
                     }
 
                     if (this.thePlayer != null && this.thePlayer.isEntityInsideOpaqueBlock()) {
-                        this.gameSettings.thirdPersonView = false;
+                        this.gameSettings.thirdPersonView = 0;
                     }
 
                     if (!this.skipRenderWorld) {
@@ -587,22 +603,10 @@ public abstract class Minecraft implements Runnable {
                     Thread.yield();
                     if (Keyboard.isKeyDown(65)) {
                         Display.update();
+                        this.updateDisplaySize();
                     }
 
                     this.screenshotListener();
-                    if (this.mcCanvas != null && !this.fullscreen && (this.mcCanvas.getWidth() != this.displayWidth || this.mcCanvas.getHeight() != this.displayHeight)) {
-                        this.displayWidth = this.mcCanvas.getWidth();
-                        this.displayHeight = this.mcCanvas.getHeight();
-                        if (this.displayWidth <= 0) {
-                            this.displayWidth = 1;
-                        }
-
-                        if (this.displayHeight <= 0) {
-                            this.displayHeight = 1;
-                        }
-
-                        this.resize(this.displayWidth, this.displayHeight);
-                    }
 
                     this.checkGLError("Post render");
                     ++var3;
@@ -656,8 +660,40 @@ public abstract class Minecraft implements Runnable {
         System.gc();
     }
 
+    private void handleGameplayKey(int code) {
+        if (code == Keyboard.KEY_ESCAPE) {
+            this.displayInGameMenu();
+            return;
+        }
+        if (this.gameSettings.keyBindReload.matches(code) || (code == Keyboard.KEY_S && this.gameSettings.keyBindDebug.isDown())) this.forceReload();
+        if (this.gameSettings.keyBindFullscreen.matches(code)) this.toggleFullscreen();
+        if (this.gameSettings.keyBindHideGui.matches(code)) this.gameSettings.hideGUI = !this.gameSettings.hideGUI;
+        if (this.gameSettings.keyBindDebug.matches(code)) this.gameSettings.showDebugInfo = !this.gameSettings.showDebugInfo;
+        if (this.gameSettings.keyBindFullbright.matches(code)) this.gameSettings.setOptionValue(EnumOptions.FULLBRIGHT, 1);
+        if (this.gameSettings.keyBindPerspective.matches(code)) this.gameSettings.cyclePerspective();
+        if (this.gameSettings.keyBindSmoothCamera.matches(code)) this.gameSettings.smoothCamera = !this.gameSettings.smoothCamera;
+        if (this.gameSettings.keyBindAttack.matches(code)) {
+            this.clickMouse(0);
+            this.mouseTicksRan = this.ticksRan;
+        }
+        if (this.gameSettings.keyBindUse.matches(code)) {
+            this.clickMouse(1);
+            this.mouseTicksRan = this.ticksRan;
+        }
+        if (this.gameSettings.keyBindPick.matches(code)) this.clickMiddleMouseButton();
+        if (this.gameSettings.keyBindDrop.matches(code)) this.thePlayer.dropCurrentItem();
+        for (int slot = 0; slot < 9; slot++) {
+            if (this.gameSettings.keyBindHotbar[slot].matches(code)) this.thePlayer.inventory.currentItem = slot;
+        }
+        if (this.gameSettings.keyBindToggleFog.matches(code)) {
+            this.gameSettings.setOptionValue(EnumOptions.RENDER_DISTANCE, !Keyboard.isKeyDown(42) && !Keyboard.isKeyDown(54) ? 1 : -1);
+        }
+        if (this.gameSettings.keyBindInventory.matches(code)) this.displayGuiScreen(new GuiInventory(this.thePlayer));
+        else if (this.isMultiplayerWorld() && this.gameSettings.keyBindChat.matches(code)) this.displayGuiScreen(new GuiChat());
+    }
+
     private void screenshotListener() {
-        if (Keyboard.isKeyDown(60)) {
+        if (!(this.currentScreen instanceof GuiControls) && this.gameSettings.keyBindScreenshot.isDown()) {
             if (!this.isTakingScreenshot) {
                 this.isTakingScreenshot = true;
                 this.ingameGUI.addChatMessage(ScreenShotHelper.saveScreenshot(minecraftDir, this.displayWidth, this.displayHeight));
@@ -855,6 +891,10 @@ public abstract class Minecraft implements Runnable {
 
     public void toggleFullscreen() {
         try {
+            if (this.nativeWindow) {
+                this.toggleNativeFullscreen();
+                return;
+            }
             this.fullscreen = !this.fullscreen;
             if (this.fullscreen) {
                 Display.setDisplayMode(Display.getDesktopDisplayMode());
@@ -895,6 +935,32 @@ public abstract class Minecraft implements Runnable {
             var2.printStackTrace();
         }
 
+    }
+
+    private void toggleNativeFullscreen() throws LWJGLException {
+        boolean entering = !this.fullscreen;
+        if (entering) this.updateDisplaySize();
+        DisplayMode mode = entering ? Display.getDesktopDisplayMode()
+                : new DisplayMode(Math.max(1, this.tempDisplayWidth), Math.max(1, this.tempDisplayHeight));
+        // Make one native transition instead of recreating the Cocoa window once
+        // for the mode and again for the fullscreen flag.
+        Display.setDisplayModeAndFullscreen(mode);
+        this.fullscreen = Display.isFullscreen();
+        this.resize(Math.max(1, Display.getWidth()), Math.max(1, Display.getHeight()));
+        Display.update();
+    }
+
+    private void updateDisplaySize() {
+        if (this.fullscreen) return;
+        int width = this.mcCanvas == null ? Display.getWidth() : this.mcCanvas.getWidth();
+        int height = this.mcCanvas == null ? Display.getHeight() : this.mcCanvas.getHeight();
+        width = Math.max(1, width);
+        height = Math.max(1, height);
+        if (width != this.displayWidth || height != this.displayHeight) this.resize(width, height);
+        if (this.nativeWindow) {
+            this.tempDisplayWidth = width;
+            this.tempDisplayHeight = height;
+        }
     }
 
     private void resize(int var1, int var2) {
@@ -1009,76 +1075,28 @@ public abstract class Minecraft implements Runnable {
                                         do {
                                             if (!Keyboard.next()) {
                                                 if (this.currentScreen == null) {
-                                                    if (Mouse.isButtonDown(0) && (float)(this.ticksRan - this.mouseTicksRan) >= this.timer.ticksPerSecond / 4.0F && this.inGameHasFocus) {
+                                                    if (this.gameSettings.keyBindAttack.isDown() && (float)(this.ticksRan - this.mouseTicksRan) >= this.timer.ticksPerSecond / 4.0F && this.inGameHasFocus) {
                                                         this.clickMouse(0);
                                                         this.mouseTicksRan = this.ticksRan;
                                                     }
 
-                                                    if (Mouse.isButtonDown(1) && (float)(this.ticksRan - this.mouseTicksRan) >= this.timer.ticksPerSecond / 4.0F && this.inGameHasFocus) {
+                                                    if (this.gameSettings.keyBindUse.isDown() && (float)(this.ticksRan - this.mouseTicksRan) >= this.timer.ticksPerSecond / 4.0F && this.inGameHasFocus) {
                                                         this.clickMouse(1);
                                                         this.mouseTicksRan = this.ticksRan;
                                                     }
                                                 }
 
-                                                this.func_6254_a(0, this.currentScreen == null && Mouse.isButtonDown(0) && this.inGameHasFocus);
+                                                this.func_6254_a(0, this.currentScreen == null && this.gameSettings.keyBindAttack.isDown() && this.inGameHasFocus);
                                                 break label301;
                                             }
 
-                                            this.thePlayer.handleKeyPress(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+                                            if (Keyboard.getEventKey() != 0) this.thePlayer.handleKeyPress(Keyboard.getEventKey(), Keyboard.getEventKeyState());
                                         } while(!Keyboard.getEventKeyState());
 
-                                        if (Keyboard.getEventKey() == 87) {
-                                            this.toggleFullscreen();
+                                        if (this.currentScreen != null) {
+                                            this.currentScreen.handleKeyboardInput();
                                         } else {
-                                            if (this.currentScreen != null) {
-                                                this.currentScreen.handleKeyboardInput();
-                                            } else {
-                                                if (Keyboard.getEventKey() == 1) {
-                                                    this.displayInGameMenu();
-                                                }
-
-                                                if (Keyboard.getEventKey() == 31 && Keyboard.isKeyDown(61)) {
-                                                    this.forceReload();
-                                                }
-
-                                                if (Keyboard.getEventKey() == 59) {
-                                                    this.gameSettings.hideGUI = !this.gameSettings.hideGUI;
-                                                }
-
-                                                if (Keyboard.getEventKey() == 61) {
-                                                    this.gameSettings.showDebugInfo = !this.gameSettings.showDebugInfo;
-                                                }
-
-                                                if (Keyboard.getEventKey() == 63) {
-                                                    this.gameSettings.thirdPersonView = !this.gameSettings.thirdPersonView;
-                                                }
-
-                                                if (Keyboard.getEventKey() == 66) {
-                                                    this.gameSettings.smoothCamera = !this.gameSettings.smoothCamera;
-                                                }
-
-                                                if (Keyboard.getEventKey() == this.gameSettings.keyBindInventory.keyCode) {
-                                                    this.displayGuiScreen(new GuiInventory(this.thePlayer));
-                                                }
-
-                                                if (Keyboard.getEventKey() == this.gameSettings.keyBindDrop.keyCode) {
-                                                    this.thePlayer.dropCurrentItem();
-                                                }
-
-                                                if (this.isMultiplayerWorld() && Keyboard.getEventKey() == this.gameSettings.keyBindChat.keyCode) {
-                                                    this.displayGuiScreen(new GuiChat());
-                                                }
-                                            }
-
-                                            for(int var6 = 0; var6 < 9; ++var6) {
-                                                if (Keyboard.getEventKey() == 2 + var6) {
-                                                    this.thePlayer.inventory.currentItem = var6;
-                                                }
-                                            }
-
-                                            if (Keyboard.getEventKey() == this.gameSettings.keyBindToggleFog.keyCode) {
-                                                this.gameSettings.setOptionValue(EnumOptions.RENDER_DISTANCE, !Keyboard.isKeyDown(42) && !Keyboard.isKeyDown(54) ? 1 : -1);
-                                            }
+                                            this.handleGameplayKey(Keyboard.getEventKey());
                                         }
                                     }
                                 }
@@ -1108,18 +1126,10 @@ public abstract class Minecraft implements Runnable {
                             if (!this.inGameHasFocus && Mouse.getEventButtonState()) {
                                 this.setIngameFocus();
                             } else {
-                                if (Mouse.getEventButton() == 0 && Mouse.getEventButtonState()) {
-                                    this.clickMouse(0);
-                                    this.mouseTicksRan = this.ticksRan;
-                                }
-
-                                if (Mouse.getEventButton() == 1 && Mouse.getEventButtonState()) {
-                                    this.clickMouse(1);
-                                    this.mouseTicksRan = this.ticksRan;
-                                }
-
-                                if (Mouse.getEventButton() == 2 && Mouse.getEventButtonState()) {
-                                    this.clickMiddleMouseButton();
+                                if (Mouse.getEventButton() >= 0) {
+                                    int code = Mouse.getEventButton() - 100;
+                                    this.thePlayer.handleKeyPress(code, Mouse.getEventButtonState());
+                                    if (Mouse.getEventButtonState()) this.handleGameplayKey(code);
                                 }
                             }
                         } else if (this.currentScreen != null) {

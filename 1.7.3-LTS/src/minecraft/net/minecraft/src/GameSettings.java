@@ -16,6 +16,7 @@ public class GameSettings {
     public float musicVolume = 1.0F;
     public float soundVolume = 1.0F;
     public float mouseSensitivity = 0.5F;
+    public float fov = 70.0F;
     public boolean invertMouse = false;
     public int renderDistance = 0;
     public boolean viewBobbing = true;
@@ -24,6 +25,7 @@ public class GameSettings {
     public int limitFramerate = 1;
     public boolean fancyGraphics = true;
     public boolean ambientOcclusion = true;
+    public boolean fullbright = false;
     public String skin = "Default";
     public KeyBinding keyBindForward = new KeyBinding("key.forward", 17);
     public KeyBinding keyBindLeft = new KeyBinding("key.left", 30);
@@ -35,12 +37,31 @@ public class GameSettings {
     public KeyBinding keyBindChat = new KeyBinding("key.chat", 20);
     public KeyBinding keyBindToggleFog = new KeyBinding("key.fog", 33);
     public KeyBinding keyBindSneak = new KeyBinding("key.sneak", 42);
+    public KeyBinding keyBindAttack = new KeyBinding("Attack / Destroy", -100);
+    public KeyBinding keyBindUse = new KeyBinding("Use / Place", -99);
+    public KeyBinding keyBindPick = new KeyBinding("Pick Block", -98);
+    public KeyBinding keyBindPerspective = new KeyBinding("Toggle Perspective", 63);
+    public KeyBinding keyBindFullbright = new KeyBinding("Toggle Fullbright", 48);
+    public KeyBinding keyBindZoom = new KeyBinding("Zoom (hold)", 46);
+    public KeyBinding keyBindHideGui = new KeyBinding("Toggle HUD", 59);
+    public KeyBinding keyBindDebug = new KeyBinding("Debug Info", 61);
+    public KeyBinding keyBindSmoothCamera = new KeyBinding("Smooth Camera", 66);
+    public KeyBinding keyBindFullscreen = new KeyBinding("Fullscreen", 87);
+    public KeyBinding keyBindReload = new KeyBinding("Reload Textures", 0);
+    public KeyBinding keyBindScreenshot = new KeyBinding("Screenshot", 60);
+    public KeyBinding[] keyBindHotbar = new KeyBinding[]{
+        new KeyBinding("Hotbar 1", 2), new KeyBinding("Hotbar 2", 3),
+        new KeyBinding("Hotbar 3", 4), new KeyBinding("Hotbar 4", 5),
+        new KeyBinding("Hotbar 5", 6), new KeyBinding("Hotbar 6", 7),
+        new KeyBinding("Hotbar 7", 8), new KeyBinding("Hotbar 8", 9), new KeyBinding("Hotbar 9", 10)
+    };
     public KeyBinding[] keyBindings;
     protected Minecraft mc;
     private File optionsFile;
     public int difficulty;
     public boolean hideGUI;
-    public boolean thirdPersonView;
+    // 0 = first person, 1 = behind, 2 = front.
+    public int thirdPersonView;
     public boolean showDebugInfo;
     public String lastServer;
     public boolean noclip;
@@ -51,10 +72,10 @@ public class GameSettings {
     public int guiScale;
 
     public GameSettings(Minecraft var1, File var2) {
-        this.keyBindings = new KeyBinding[]{this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindSneak, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog};
+        this.keyBindings = new KeyBinding[]{this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindSneak, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog, this.keyBindAttack, this.keyBindUse, this.keyBindPick, this.keyBindPerspective, this.keyBindZoom, this.keyBindFullbright, this.keyBindHideGui, this.keyBindDebug, this.keyBindSmoothCamera, this.keyBindFullscreen, this.keyBindScreenshot, this.keyBindReload, this.keyBindHotbar[0], this.keyBindHotbar[1], this.keyBindHotbar[2], this.keyBindHotbar[3], this.keyBindHotbar[4], this.keyBindHotbar[5], this.keyBindHotbar[6], this.keyBindHotbar[7], this.keyBindHotbar[8]};
         this.difficulty = 2;
         this.hideGUI = false;
-        this.thirdPersonView = false;
+        this.thirdPersonView = 0;
         this.showDebugInfo = false;
         this.lastServer = "";
         this.noclip = false;
@@ -69,10 +90,10 @@ public class GameSettings {
     }
 
     public GameSettings() {
-        this.keyBindings = new KeyBinding[]{this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindSneak, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog};
+        this.keyBindings = new KeyBinding[]{this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindSneak, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog, this.keyBindAttack, this.keyBindUse, this.keyBindPick, this.keyBindPerspective, this.keyBindZoom, this.keyBindFullbright, this.keyBindHideGui, this.keyBindDebug, this.keyBindSmoothCamera, this.keyBindFullscreen, this.keyBindScreenshot, this.keyBindReload, this.keyBindHotbar[0], this.keyBindHotbar[1], this.keyBindHotbar[2], this.keyBindHotbar[3], this.keyBindHotbar[4], this.keyBindHotbar[5], this.keyBindHotbar[6], this.keyBindHotbar[7], this.keyBindHotbar[8]};
         this.difficulty = 2;
         this.hideGUI = false;
-        this.thirdPersonView = false;
+        this.thirdPersonView = 0;
         this.showDebugInfo = false;
         this.lastServer = "";
         this.noclip = false;
@@ -89,7 +110,7 @@ public class GameSettings {
     }
 
     public String getOptionDisplayString(int var1) {
-        return Keyboard.getKeyName(this.keyBindings[var1].keyCode);
+        return this.keyBindings[var1].getDisplayName();
     }
 
     public void setKeyBinding(int var1, int var2) {
@@ -97,7 +118,16 @@ public class GameSettings {
         this.saveOptions();
     }
 
+    public void cyclePerspective() {
+        this.thirdPersonView = (this.thirdPersonView + 1) % 3;
+    }
+
+    public static float clampFov(float value) {
+        return Float.isNaN(value) ? 70.0F : Math.max(30.0F, Math.min(110.0F, value));
+    }
+
     public void setOptionFloatValue(EnumOptions var1, float var2) {
+        if (var1 == EnumOptions.FOV) this.fov = clampFov(30.0F + var2 * 80.0F);
         if (var1 == EnumOptions.MUSIC) {
             this.musicVolume = var2;
             this.mc.sndManager.onSoundOptionsChanged();
@@ -115,6 +145,10 @@ public class GameSettings {
     }
 
     public void setOptionValue(EnumOptions var1, int var2) {
+        if (var1 == EnumOptions.FULLBRIGHT) {
+            this.fullbright = !this.fullbright;
+            if (this.mc != null && this.mc.entityRenderer != null) this.mc.entityRenderer.updateLighting();
+        }
         if (var1 == EnumOptions.INVERT_MOUSE) {
             this.invertMouse = !this.invertMouse;
         }
@@ -163,6 +197,7 @@ public class GameSettings {
     }
 
     public float getOptionFloatValue(EnumOptions var1) {
+        if (var1 == EnumOptions.FOV) return (this.fov - 30.0F) / 80.0F;
         if (var1 == EnumOptions.MUSIC) {
             return this.musicVolume;
         } else if (var1 == EnumOptions.SOUND) {
@@ -173,6 +208,7 @@ public class GameSettings {
     }
 
     public boolean getOptionOrdinalValue(EnumOptions var1) {
+        if (var1 == EnumOptions.FULLBRIGHT) return this.fullbright;
         switch(EnumOptionsMappingHelper.enumOptionsMappingHelperArray[var1.ordinal()]) {
         case 1:
             return this.invertMouse;
@@ -190,6 +226,7 @@ public class GameSettings {
     }
 
     public String getKeyBinding(EnumOptions var1) {
+        if (var1 == EnumOptions.FOV) return "FOV: " + Math.round(this.fov);
         StringTranslate var2 = StringTranslate.getInstance();
         String var3 = var2.translateKey(var1.getEnumString()) + ": ";
         if (var1.getEnumFloat()) {
@@ -245,6 +282,8 @@ public class GameSettings {
                         this.mouseSensitivity = this.parseFloat(var3[1]);
                     }
 
+                    if (var3[0].equals("fov")) this.fov = clampFov(Float.parseFloat(var3[1]));
+
                     if (var3[0].equals("invertYMouse")) {
                         this.invertMouse = var3[1].equals("true");
                     }
@@ -280,6 +319,8 @@ public class GameSettings {
                     if (var3[0].equals("fancyGraphics")) {
                         this.fancyGraphics = var3[1].equals("true");
                     }
+
+                    if (var3[0].equals("fullbright")) this.fullbright = var3[1].equals("true");
 
                     if (var3[0].equals("ao")) {
                         this.ambientOcclusion = var3[1].equals("true");
@@ -326,6 +367,7 @@ public class GameSettings {
             var1.println("sound:" + this.soundVolume);
             var1.println("invertYMouse:" + this.invertMouse);
             var1.println("mouseSensitivity:" + this.mouseSensitivity);
+            var1.println("fov:" + this.fov);
             var1.println("viewDistance:" + this.renderDistance);
             var1.println("guiScale:" + this.guiScale);
             var1.println("bobView:" + this.viewBobbing);
@@ -335,6 +377,7 @@ public class GameSettings {
             var1.println("difficulty:" + this.difficulty);
             var1.println("fancyGraphics:" + this.fancyGraphics);
             var1.println("ao:" + this.ambientOcclusion);
+            var1.println("fullbright:" + this.fullbright);
             var1.println("skin:" + this.skin);
             var1.println("lastServer:" + this.lastServer);
 
